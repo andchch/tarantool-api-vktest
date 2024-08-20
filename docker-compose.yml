@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  tarantool:
+    image: tarantool/tarantool:2.x
+    container_name: tarantool_instance
+    ports:
+      - "3301:3301"
+    volumes:
+      - ./init.lua:/opt/tarantool/init.lua
+    command: tarantool /opt/tarantool/init.lua
+    networks:
+      - tarantool-network
+  api:
+    build:
+      dockerfile: Dockerfile
+    container_name: tarantool_api
+    ports:
+      - "8000:8000"
+    networks:
+      - tarantool-network
+    depends_on:
+      - tarantool
+
+networks:
+  tarantool-network:
+    driver: bridge
